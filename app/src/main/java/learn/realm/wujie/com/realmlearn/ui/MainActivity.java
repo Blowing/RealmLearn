@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
         //删除
 
         final RealmResults<User> users = realm.where(User.class).findAll();
