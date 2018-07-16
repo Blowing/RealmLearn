@@ -8,5 +8,23 @@ import io.realm.RealmObject;
 
 public class Email extends RealmObject {
     public String address;
+
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     public boolean active;
 }

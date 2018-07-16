@@ -1,10 +1,12 @@
 package learn.realm.wujie.com.realmlearn.ui;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import java.util.List;
 
+import io.realm.DynamicRealm;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import learn.realm.wujie.com.realmlearn.R;
@@ -17,63 +19,82 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //新建对象，并进行存储
+
         Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        final User user = realm.createObject(User.class);
-        user.setName("John");
-        user.setAge(17);
-        realm.commitTransaction();
-
-        //复制一个对象到Realm数据库
-        User user1 = new User();
-        user1.setName("wujie");
-        user1.setAge(78);
-        realm.beginTransaction();
-        realm.copyToRealm(user1);
-        realm.commitTransaction();
-
-        final User user2 = new User();
-        user2.setAge(123);
-        user2.setName("xcv");
-        //使用事物块
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                realm.copyToRealm(user2);
+                User myUser = realm.createObject(User.class);
+                myUser.setAge(2);
+                myUser.setName("wujun");
             }
         });
-
-
-
-        //删除
-
-        final RealmResults<User> users = realm.where(User.class).findAll();
+        User myUser = realm.where(User.class).equalTo("age", 2).findFirst();
 
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                User user3 = users.get(0);
-                user3.deleteFromRealm();
-                users.deleteFirstFromRealm();
-                users.deleteLastFromRealm();
-                users.deleteFromRealm(1);
-                users.deleteAllFromRealm();
+                User user = realm.where(User.class).equalTo("age",2).findFirst();
+                user.setAge(3);
             }
         });
+        Log.i("wujie", myUser.getAge()+ myUser.getName());
+        realm.close();
+
+//
+//        //复制一个对象到Realm数据库
+//        User user1 = new User();
+//        user1.setName("wujie");
+//        user1.setAge(78);
+//        realm.beginTransaction();
+//        realm.copyToRealm(user1);
+//        realm.commitTransaction();
+//
+//        final User user2 = new User();
+//        user2.setAge(123);
+//        user2.setName("xcv");
+//        //使用事物块
+//        realm.executeTransaction(new Realm.Transaction() {
+//            @Override
+//            public void execute(Realm realm) {
+//                realm.copyToRealm(user2);
+//            }
+//        });
+//
+//
+//
+//
+//        //删除
+//
+//        final RealmResults<User> users = realm.where(User.class).findAll();
+//        RealmResults<User> users1 = realm.where(User.class).lessThanOrEqualTo("age",2).findAll();
+//
+//        realm.executeTransaction(new Realm.Transaction() {
+//            @Override
+//            public void execute(Realm realm) {
+//                User user3 = users.get(0);
+//                user3.deleteFromRealm();
+//                users.deleteFirstFromRealm();
+//                users.deleteLastFromRealm();
+//                users.deleteFromRealm(1);
+//                users.deleteAllFromRealm();
+//            }
+//        });
 
         //改
 
-        final User user4 = realm.where(User.class).equalTo("age", 18).findFirst();
-        realm.beginTransaction();
-        user4.setName("123");
-        realm.commitTransaction();
+//        final User user4 = realm.where(User.class).equalTo("age", 18).findFirst();
+//        realm.beginTransaction();
+//        user4.setName("123");
+//        realm.commitTransaction();
 
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                user4.setName("2345");
-            }
-        });
+//        realm.executeTransaction(new Realm.Transaction() {
+//            @Override
+//            public void execute(Realm realm) {
+//                user4.setName("2345");
+//            }
+//        });
+        DynamicRealm dynamicRealm = DynamicRealm.getInstance(Realm.getDefaultConfiguration());
 
     }
 

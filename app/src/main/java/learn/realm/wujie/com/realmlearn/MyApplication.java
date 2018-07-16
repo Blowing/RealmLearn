@@ -1,6 +1,7 @@
 package learn.realm.wujie.com.realmlearn;
 
 import android.app.Application;
+import android.support.multidex.MultiDex;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -17,5 +18,6 @@ public class MyApplication extends Application {
         Realm.init(this);
         RealmConfiguration config = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(config);
+        MultiDex.install(this);
     }
 }
