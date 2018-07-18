@@ -9,7 +9,15 @@ import io.realm.annotations.LinkingObjects;
  */
 
 public class Dog extends RealmObject{
-    public String name;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    private String name;
 
     @LinkingObjects("dog")
     public final RealmResults<Person> owners = null;
