@@ -1,10 +1,7 @@
 package learn.realm.wujie.com.realmlearn.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-
-import com.wujie.jsonexample.JsonExampleActivity;
 
 import java.util.List;
 
@@ -21,9 +18,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //新建对象，并进行存储
-
-
-       startActivity(new Intent(this, JsonExampleActivity.class));
 
 //
 //        //复制一个对象到Realm数据库
