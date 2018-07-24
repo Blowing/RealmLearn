@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.LinearLayout
 import android.widget.TextView
 import io.realm.Realm
+import java.util.Collections.sort
 
 class KotlinExampleActivity : AppCompatActivity() {
 
@@ -36,26 +37,78 @@ class KotlinExampleActivity : AppCompatActivity() {
         showStatus(runoob.country)
         runoob.print("大家有点小调皮")
 
-        var test = Test()
+        val demo = Outer.Nested().foo()
+        showStatus("$demo")
 
-        test.setInterFace(object : TextInterFace {
+        val demo1 = Outer1().Inner().foo()
+        showStatus("$demo1")
+        val demo2 = Outer1().Inner().innerTest()
+        showStatus("$demo2")
+
+        val test = Test()
+        test.setInterFace(object : TestInterFace {
             override fun test() {
                 showStatus("对象表达式创建匿名内部类的实例")
             }
         })
 
-        val s = Student("Runoob", 18, "S12346", 89)
-        showStatus("学生名${s.name}")
-        showStatus("年龄：${s.age}")
-        showStatus("学生号：${s.no}")
-        showStatus("成绩: ${s.score}")
+
+        val s = Student("猪八戒", 800, "10086", 99)
+        showStatus(s.name)
+        showStatus(s.age.toString())
+        showStatus(s.no)
+        showStatus(s.score.toString())
+
+        showStatus(Student2().study())
+
+        showStatus(Foo1().x.toString())
+
+        showStatus(Child().bar())
+        showStatus(Child().foo())
+
+        showStatus(C().foo())
+        showStatus(C().bar())
+        showStatus(D().bar())
+        showStatus(D().foo())
+        showStatus(D().print())
+        val l = mutableListOf<Int>(1, 2, 3)
+        l.swap(0, 2)
+        showStatus(l.toString())
+        val last = listOf(1, 2, 3,4)
+        showStatus("last:${last.lastIndex}")
+        showStatus("no:${MyClass.no}")
+        showStatus(MyClass.foo())
+        showStatus(F().caller(E()))
+
+        val tom = User(name = "tom", age = 12)
+        val bigTom = tom.copy(age = 13)
+        showStatus(tom.toString())
+        showStatus(bigTom.toString())
+
+        val jane = User("Jane", 25)
+        val (name, age) = jane
+        showStatus("$name, $age years of age")
+
+        var boxInt = Box<Int>(10)
+        var boxString = Box<String>("德玛西亚")
+        showStatus(boxInt.value.toString())
+        showStatus(boxString.value)
+
+        doPrintln(23)
+        doPrintln("wujie")
+        doPrintln(true)
+        sort(listOf<Int>(1,2,3))
+        showStatus(Color.BLACK.name)
 
     }
+    private val List<Int>.lastIndex: Int
+        get() = 1
 
-    fun hasPrefix(x: Any) = when(x) {
+    fun hasPrefix(x: Any) = when (x) {
         is String -> x.startsWith("prefix")
         else -> false
     }
+
     override fun onDestroy() {
         super.onDestroy()
         realm.close()
@@ -74,21 +127,21 @@ class KotlinExampleActivity : AppCompatActivity() {
 
     class Person {
         var lastName: String = "zhang"
-        get() = field.toUpperCase()
-        set
+            get() = field.toUpperCase()
+            set
 
         var no: Int = 100
-        get() = field
-        set(value) {
-            if (value < 10) {
-                field = value
-            } else {
-                field = -1
+            get() = field
+            set(value) {
+                if (value < 10) {
+                    field = value
+                } else {
+                    field = -1
+                }
             }
-        }
 
         var height: Float = 189.4f
-        private set
+            private set
 
     }
 
@@ -98,17 +151,18 @@ class KotlinExampleActivity : AppCompatActivity() {
         var siteName = name
         var rootlayout = layout
         var context = context
+
         init {
             print("初始化网名：${url}")
         }
 
-        constructor(name: String, layout:LinearLayout, context: Context, url: String)
-                : this(name,layout, context) {
-            print("我的url"+ url)
+        constructor(name: String, layout: LinearLayout, context: Context, url: String)
+                : this(name, layout, context) {
+            print("我的url" + url)
         }
 
 
-         fun print(text: String) {
+        fun print(text: String) {
             val textView = TextView(context)
             textView.text = text
             rootlayout.addView(textView)
@@ -120,50 +174,201 @@ class KotlinExampleActivity : AppCompatActivity() {
         open fun f() {}
     }
 
-    abstract class Derived: Base() {
+    abstract class Derived : Base() {
         override abstract fun f()
     }
 
-    class Outer{
+    class Outer {
         private val bar: Int = 1
         class Nested {
             fun foo() = 2
         }
     }
 
-    fun main(args: Array<String>) {
-        val demo = Outer.Nested().foo()
-        showStatus("${demo}")
+    class Outer1 {
+        private val bar: Int = 1
+        var v = "成员属性"
+        inner class Inner {
+            fun foo() = bar
+            fun innerTest() : Int {
+                var o = this@Outer1
+                return o.bar
+
+            }
+        }
     }
 
     class Test {
         var v = "成员属性"
-        fun setInterFace(test: TextInterFace) {
+        fun setInterFace(test: TestInterFace) {
             test.test()
         }
     }
 
-    interface TextInterFace {
+    interface TestInterFace{
         fun test()
     }
 
 
     open class Person1(var name: String, var age: Int) {
-    }
-
-    class Student(name : String, age: Int, var no : String ,var score: Int) : Person1(name, age) {
 
     }
+    class Student(name: String, age: Int, var no:String , var score: Int) : Person1(name, age) {
 
-    open class Person2(name: String) {
-        constructor(name: String, age: Int):this(name) {
+    }
+
+    open class Person2 {
+        open fun study() : String {
+            return "我毕业了"
         }
     }
 
-    class Student4: Person2 {
-        constructor(name: String, age: Int, no: String, score: Int):super(name, age) {
+    class Student2 : Person2() {
+        override fun study(): String {
+            return "我在读大学"
+        }
+    }
 
+    open class Foo {
+        open val x: Int
+        get() = 23
+    }
+
+    class Foo1 : Foo() {
+         override val x: Int = 12
+    }
+
+    interface Fooo {
+        val count: Int
+    }
+
+    class bar1(override val count: Int) : Fooo
+
+    class bar2: Fooo {
+        override val count: Int
+            get() = 0
+
+    }
+
+    interface  MyInterface {
+        val name: String
+        fun bar() : String
+        fun foo() : String {
+            return "foo"
+        }
+    }
+
+    class Child : MyInterface {
+        override val name: String = "sss"
+        override fun bar() : String {
+            return "bar"
+        }
+    }
+
+    interface A {
+        fun foo(): String{
+            return "A"
+        }
+        fun bar():String
+    }
+
+    interface B {
+        fun foo() : String{
+            return "B"
+        }
+        fun bar() : String {
+            return "bar"
+        }
+    }
+
+    class C : A {
+        override fun bar() : String{
+            return "bar"
+        }
+    }
+
+    class D : A, B {
+        override fun bar(): String {
+           return super<B>.bar()
         }
 
+        override fun foo(): String {
+            return super<A>.foo() + super<B>.foo()
+        }
+
+    }
+
+    fun D.print() : String{
+        return "print"
+    }
+
+    fun MutableList<Int>.swap(index1 : Int, index2: Int) {
+        val tmp = this[index1]
+        this[index1] = this[index2]
+        this[index2] = tmp
+    }
+
+    class MyClass {
+        companion object {
+
+        }
+    }
+
+    fun MyClass.Companion.foo(): String{
+        return ("伴生对象的扩展函数")
+    }
+
+    val MyClass.Companion.no: Int
+        get() = 89
+
+
+    class E {
+        fun bar():String = "E bar"
+    }
+
+    class F {
+        fun baz(): String = "F baz"
+
+        fun foo(): String = "F foo"
+        fun E.foo() : String = bar() + baz() + this@F.foo()
+
+        fun caller(e : E): String  = e.foo()
+    }
+
+    data class User (val name: String, val age: Int)
+
+    class Box<T>(t: T) {
+        val value = t
+    }
+
+    fun <T> doPrintln(content: T) {
+        when (content) {
+            is Int ->showStatus("整形数字为$content")
+            is String ->showStatus("字符串转换为大写为${content.toUpperCase()}")
+            else -> showStatus("T是其他类型")
+        }
+    }
+
+    enum class Color{
+        RED,
+        BLACK,
+        BLUE,
+        GREEN,
+        WHITE
+    }
+
+    class G {
+        private fun foo() = object {
+            val x: String = "x"
+        }
+
+        private fun publicFoo() =  {
+            val x: String = "x"
+        }
+
+        fun bar() {
+            val x1 = foo().x
+
+        }
     }
 }
