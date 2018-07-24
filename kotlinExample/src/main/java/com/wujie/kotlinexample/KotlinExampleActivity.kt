@@ -2,11 +2,14 @@ package com.wujie.kotlinexample
 
 import android.content.Context
 import android.os.Bundle
+import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.widget.LinearLayout
 import android.widget.TextView
 import io.realm.Realm
 import java.util.Collections.sort
+import kotlin.properties.Delegates
+import kotlin.reflect.KProperty
 
 class KotlinExampleActivity : AppCompatActivity() {
 
@@ -99,6 +102,23 @@ class KotlinExampleActivity : AppCompatActivity() {
         doPrintln(true)
         sort(listOf<Int>(1,2,3))
         showStatus(Color.BLACK.name)
+        var s1 = Site
+        var s2 = Site
+        s1.url = "www.baidu.com"
+        showStatus(s1.url)
+        showStatus(s2.url)
+        showStatus(KotlinExampleActivity.Site.url)
+        showStatus(KotlinExampleActivity.Site.name)
+
+        val b = BaseImpl(10)
+        showStatus(Derivedd(b).print())
+
+        val site1 = Site1(mapOf("name" to "菜鸟教程", "url" to "www.runoob.com"))
+        showStatus(site1.name)
+        showStatus(site1.url)
+
+        var artist: MediaStore.Audio.Artists ? = null
+        artist!!.equals("ss")
 
     }
     private val List<Int>.lastIndex: Int
@@ -370,5 +390,48 @@ class KotlinExampleActivity : AppCompatActivity() {
             val x1 = foo().x
 
         }
+    }
+
+    object Site {
+        var url: String = ""
+        val name: String = "菜鸟教程"
+    }
+
+
+    //类委托
+    interface Basee {
+        fun print() : String
+    }
+
+    class BaseImpl(val x: Int) : Basee {
+        override fun print() : String {
+            return x.toString()
+        }
+
+    }
+    class Derivedd(a : Basee) : Basee by a
+
+    class Example {
+        var p: String by Delegate()
+    }
+    class Delegate {
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): String {
+            return "$thisRef, 这里委托了${property.name}属性"
+        }
+        operator fun setValue(thisRef: Any?, property: KProperty<*>, value: String) {
+
+        }
+    }
+
+    class Userr {
+        var name: String by Delegates.observable("初始值") {
+            property, oldValue, newValue ->
+            println("旧值：$oldValue ->新值：$newValue")
+        }
+    }
+
+    class Site1(val map: Map<String, Any?>) {
+        val name: String by map
+        val url: String by map
     }
 }
